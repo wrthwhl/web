@@ -1,0 +1,10 @@
+[build]
+  command = "pnpm contentlayer2 build && pnpm nx build wrthwhl"
+  publish = "dist/apps/wrthwhl/.next"
+
+[build.environment]
+  NODE_VERSION = "22"
+  PNPM_VERSION = "10"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"

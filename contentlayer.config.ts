@@ -22,7 +22,7 @@ export const Resume = defineDocumentType(() => ({
 
 export default makeSource({
   disableImportAliasWarning: true,
-  contentDirPath: 'src',
+  contentDirPath: 'libs/content/src',
   documentTypes: [Resume],
   mdx: { rehypePlugins: [], remarkPlugins: [] },
 });

@@ -1,7 +1,13 @@
 import { AppProps } from 'next/app';
 import Head from 'next/head';
 import { MantineProvider } from '@mantine/core';
-import { theme, styles } from '../theme';
+import { MantineEmotionProvider, emotionTransform } from '@mantine/emotion';
+import { theme } from '../theme';
+import { emotionCache } from '../emotion/cache';
+
+// Import Mantine core styles
+import '@mantine/core/styles.css';
+import '../styles/globals.css';
 
 export default function App(props: AppProps) {
   const { Component, pageProps } = props;
@@ -16,16 +22,15 @@ export default function App(props: AppProps) {
         />
       </Head>
 
-      <MantineProvider
-        withGlobalStyles
-        withNormalizeCSS
-        {...{
-          theme,
-          styles,
-        }}
-      >
-        <Component {...pageProps} />
-      </MantineProvider>
+      <MantineEmotionProvider cache={emotionCache}>
+        <MantineProvider
+          theme={theme}
+          forceColorScheme="dark"
+          stylesTransform={emotionTransform}
+        >
+          <Component {...pageProps} />
+        </MantineProvider>
+      </MantineEmotionProvider>
     </>
   );
 }

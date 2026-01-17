@@ -76,16 +76,80 @@
 :root {
   --color-accent-base: var(--color-teal-5);
 
-  /* Derived variants */
+  /* Derived accent variants */
   --color-accent: var(--color-accent-base);
   --color-accent-hover: color-mix(in srgb, var(--color-accent-base), white 40%);
   --color-accent-print: color-mix(in srgb, var(--color-accent-base), black 30%);
 }
 
+/*
+ * Theme configuration
+ * Semantic color tokens that change based on theme.
+ * Dark theme is the default.
+ */
+:root {
+  /* Page colors */
+  --theme-bg-page: var(--color-dark-8);
+  --theme-bg-surface: var(--color-dark-6);
+  --theme-bg-elevated: var(--color-dark-7);
+  --theme-bg-contrast: var(--color-dark-9);
+
+  /* Text colors */
+  --theme-text-primary: var(--color-gray-2);
+  --theme-text-body: var(--color-gray-2);
+  --theme-text-description: var(--color-gray-4);
+  --theme-text-muted: var(--color-gray-6);
+  --theme-text-tertiary: var(--color-gray-7);
+
+  /* Border colors */
+  --theme-border-subtle: var(--color-dark-4);
+  --theme-border-muted: var(--color-gray-8);
+
+  /* Button colors */
+  --theme-btn-ghost-text: var(--color-dark-0);
+  --theme-btn-ghost-hover-bg: var(--color-dark-6);
+  --theme-btn-ghost-hover-text: var(--color-gray-2);
+  --theme-btn-outline-hover-bg: var(--color-dark-7);
+  --theme-btn-primary-text: var(--color-dark-9);
+}
+
+/* Light theme overrides */
+:root.light {
+  /* Page colors */
+  --theme-bg-page: var(--color-gray-2);
+  --theme-bg-surface: var(--color-gray-1);
+  --theme-bg-elevated: var(--color-gray-3);
+  --theme-bg-contrast: var(--color-gray-4);
+
+  /* Text colors */
+  --theme-text-primary: var(--color-gray-9);
+  --theme-text-body: var(--color-gray-8);
+  --theme-text-description: var(--color-gray-7);
+  --theme-text-muted: var(--color-gray-6);
+  --theme-text-tertiary: var(--color-gray-5);
+
+  /* Border colors */
+  --theme-border-subtle: var(--color-gray-3);
+  --theme-border-muted: var(--color-gray-4);
+
+  /* Button colors */
+  --theme-btn-ghost-text: var(--color-gray-8);
+  --theme-btn-ghost-hover-bg: var(--color-gray-2);
+  --theme-btn-ghost-hover-text: var(--color-gray-9);
+  --theme-btn-outline-hover-bg: var(--color-gray-1);
+  --theme-btn-primary-text: var(--color-gray-0);
+
+  /* Adjust accent for light mode (darker for better contrast) */
+  --color-accent: var(--color-teal-6);
+  --color-accent-hover: var(--color-teal-7);
+}
+
 /* Base styles */
 @layer base {
   body {
-    @apply bg-dark-8 text-gray-2 antialiased;
+    background-color: var(--theme-bg-page);
+    color: var(--theme-text-body);
+    @apply antialiased;
   }
 }
 
@@ -161,10 +225,10 @@
 @layer utilities {
   /* Semantic text colors */
   .text-body {
-    @apply text-gray-2;
+    color: var(--theme-text-body);
   }
   .text-description {
-    @apply text-gray-4;
+    color: var(--theme-text-description);
   }
 
   /* Interactive accent text */
@@ -188,46 +252,48 @@
 
   /* Muted text variants */
   .text-muted {
-    @apply text-gray-6;
+    color: var(--theme-text-muted);
   }
   .text-muted-sm {
-    @apply text-sm text-gray-6;
+    color: var(--theme-text-muted);
+    font-size: 0.875rem;
   }
   .text-muted-xs {
-    @apply text-xs text-gray-6;
+    color: var(--theme-text-muted);
+    font-size: 0.75rem;
   }
 
   /* Tertiary text (dates, etc.) */
   .text-tertiary {
-    @apply text-gray-7;
+    color: var(--theme-text-tertiary);
   }
 
   /* Semantic background colors */
   .bg-surface {
-    @apply bg-dark-6;
+    background-color: var(--theme-bg-surface);
   }
   .bg-page {
-    @apply bg-dark-8;
+    background-color: var(--theme-bg-page);
   }
   .bg-elevated {
-    @apply bg-dark-7;
+    background-color: var(--theme-bg-elevated);
   }
   .bg-contrast {
-    @apply bg-dark-9;
+    background-color: var(--theme-bg-contrast);
   }
 
   /* Semantic border colors */
   .border-subtle {
-    @apply border-dark-4;
+    border-color: var(--theme-border-subtle);
   }
   .border-muted {
-    @apply border-gray-8;
+    border-color: var(--theme-border-muted);
   }
 
   /* Button semantic colors */
   .btn-primary {
     background-color: var(--color-accent);
-    color: var(--color-dark-9);
+    color: var(--theme-btn-primary-text);
     transition: background-color 0.15s;
   }
   .btn-primary:hover {
@@ -242,11 +308,18 @@
       color 0.15s;
   }
   .btn-outline:hover {
-    background-color: var(--color-dark-7);
+    background-color: var(--theme-btn-outline-hover-bg);
     color: var(--color-accent-hover);
   }
   .btn-ghost {
-    @apply text-dark-0 hover:bg-dark-6 hover:text-gray-2;
+    color: var(--theme-btn-ghost-text);
+    transition:
+      background-color 0.15s,
+      color 0.15s;
+  }
+  .btn-ghost:hover {
+    background-color: var(--theme-btn-ghost-hover-bg);
+    color: var(--theme-btn-ghost-hover-text);
   }
   .btn-link {
     color: var(--color-accent);

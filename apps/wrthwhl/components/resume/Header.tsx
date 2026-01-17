@@ -3,6 +3,7 @@
 import { ReactNode } from 'react';
 import { AvatarImage } from '../ui/Avatar';
 import { Button } from '../ui/Button';
+import { ThemeSwitcher } from '../ui/ThemeSwitcher';
 import { useResume } from './Context';
 import { useScrollProgress } from '../../lib/useScrollProgress';
 import { cn } from '../../lib/utils';
@@ -10,7 +11,7 @@ import { cn } from '../../lib/utils';
 // Constants
 const SCROLL_THRESHOLD = 80;
 const AVATAR_SIZE = 80;
-const AVATAR_MIN_SCALE = 0.6;
+const AVATAR_MIN_SCALE = 0.618;
 
 export const Header = ({ children }: { children?: ReactNode }) => {
   const resume = useResume();
@@ -27,10 +28,10 @@ export const Header = ({ children }: { children?: ReactNode }) => {
         {
           // Set CSS custom property for scroll progress
           '--progress': progress,
-          // Use color-mix for smooth background transition: dark-8 -> dark-9
-          backgroundColor: `color-mix(in srgb, var(--color-dark-8), var(--color-dark-9) calc(var(--progress) * 100%))`,
+          // Use color-mix for smooth background transition: page -> contrast
+          backgroundColor: `color-mix(in srgb, var(--theme-bg-page), var(--theme-bg-contrast) calc(var(--progress) * 100%))`,
           paddingTop: `calc(1.618em - var(--progress) * 1em)`,
-          paddingBottom: `calc(1em - var(--progress) * 0.5em)`,
+          paddingBottom: `calc(1em - var(--progress) * 0.618em)`,
         } as React.CSSProperties
       }
     >
@@ -52,7 +53,7 @@ export const Header = ({ children }: { children?: ReactNode }) => {
             <h1
               className="font-heading font-bold text-accent small-caps"
               style={{
-                fontSize: `calc(2.25rem - var(--progress) * 0.5rem)`,
+                fontSize: `calc(2.25rem - var(--progress) * 0.618rem)`,
                 lineHeight: 1.1,
               }}
             >
@@ -62,8 +63,8 @@ export const Header = ({ children }: { children?: ReactNode }) => {
               className="overflow-hidden"
               style={{
                 // Fade faster: complete by 40% scroll (multiply by 2.5)
-                opacity: `calc(1 - min(1, var(--progress) * 2.5))`,
-                maxHeight: `calc(2.5em * (1 - var(--progress)))`,
+                opacity: `calc(1 - min(1, var(--progress) * 2.618))`,
+                maxHeight: `calc(2.618em * (1 - var(--progress)))`,
               }}
             >
               {resume.nationality && (
@@ -77,13 +78,16 @@ export const Header = ({ children }: { children?: ReactNode }) => {
             </div>
           </div>
         </div>
-        <Button
-          variant="outline"
-          onClick={() => window.print()}
-          className="no-print shrink-0"
-        >
-          Print
-        </Button>
+        <div className="flex items-center gap-2">
+          <ThemeSwitcher />
+          <Button
+            variant="outline"
+            onClick={() => window.print()}
+            className="no-print shrink-0"
+          >
+            Print
+          </Button>
+        </div>
       </div>
     </div>
   );

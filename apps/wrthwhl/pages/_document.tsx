@@ -1,8 +1,19 @@
 import { Head, Html, Main, NextScript } from 'next/document';
 
+// Blocking script to prevent theme flicker
+// Runs before page renders to set the correct theme class
+const themeScript = `
+  (function() {
+    var theme = localStorage.getItem('theme');
+    if (theme === 'light' || (!theme && window.matchMedia('(prefers-color-scheme: light)').matches)) {
+      document.documentElement.classList.add('light');
+    }
+  })();
+`;
+
 export default function Document() {
   return (
-    <Html lang="en" className="dark">
+    <Html lang="en">
       <Head>
         <link
           href="https://fonts.googleapis.com/css2?family=Kufam:ital,wght@0,400;0,800;1,400;1,800&display=swap"
@@ -29,6 +40,7 @@ export default function Document() {
         <style>{`body, #__next { height: 100vh; }`}</style>
       </Head>
       <body>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <Main />
         <NextScript />
       </body>

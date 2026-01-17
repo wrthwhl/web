@@ -1,5 +1,8 @@
+'use client';
+
 import { ReactNode } from 'react';
 import { cn } from '../../lib/utils';
+import { FadeIn } from '../ui/FadeIn';
 
 export interface TimelineItemProps {
   title: string;
@@ -17,7 +20,7 @@ const TimelineItem = ({
   children,
 }: TimelineItemProps) => {
   return (
-    <div className="flex flex-row mx-phi-sm my-phi-lg print-avoid-break">
+    <FadeIn className="flex flex-row mx-phi-sm my-phi-lg print-avoid-break">
       <div className="mr-phi-lg font-mono">
         <div className="h-full flex flex-col justify-between text-center">
           <span className="text-tertiary">{end || 'Now'}</span>
@@ -39,7 +42,7 @@ const TimelineItem = ({
           {children}
         </div>
       </div>
-    </div>
+    </FadeIn>
   );
 };
 

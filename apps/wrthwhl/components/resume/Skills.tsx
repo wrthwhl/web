@@ -1,6 +1,9 @@
+'use client';
+
 import { ReactNode } from 'react';
 import { Star } from 'lucide-react';
 import { cn } from '../../lib/utils';
+import { FadeIn } from '../ui/FadeIn';
 
 export const SkillGroup = ({
   rating,
@@ -44,10 +47,10 @@ export const Skill = ({
   children: ReactNode;
 }) => {
   return (
-    <div className="mt-phi-md">
+    <FadeIn className="mt-phi-md">
       <div className="text-muted-sm small-caps">{category}</div>
       <div className="text-body text-xs">{children}</div>
-    </div>
+    </FadeIn>
   );
 };
 

@@ -175,6 +175,25 @@
   }
 }
 
+/* Scroll animations - only on screen */
+@media screen {
+  .animate-fade-slide-up {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  .animate-fade-slide-up.is-visible {
+    animation: fadeSlideUp 0.5s ease-out forwards;
+  }
+
+  @keyframes fadeSlideUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
 /* Print styles */
 @media print {
   .no-print {

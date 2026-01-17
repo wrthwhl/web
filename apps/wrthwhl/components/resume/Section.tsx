@@ -1,3 +1,5 @@
+'use client';
+
 import { ReactNode } from 'react';
 import {
   Briefcase,
@@ -6,6 +8,7 @@ import {
   Contact as ContactIcon,
 } from 'lucide-react';
 import { Separator } from '../ui/Separator';
+import { FadeIn } from '../ui/FadeIn';
 import { cn } from '../../lib/utils';
 
 const iconMap: Record<string, typeof Briefcase> = {
@@ -29,7 +32,9 @@ export const Section = ({
   const Icon = icon ? iconMap[icon] : null;
 
   return (
-    <div className={cn(noPrint && 'print:hidden', 'print-avoid-break-after')}>
+    <FadeIn
+      className={cn(noPrint && 'print:hidden', 'print-avoid-break-after')}
+    >
       <Separator
         label={
           <>
@@ -40,6 +45,6 @@ export const Section = ({
         labelPosition="center"
       />
       {children}
-    </div>
+    </FadeIn>
   );
 };

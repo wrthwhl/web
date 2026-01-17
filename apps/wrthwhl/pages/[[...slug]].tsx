@@ -43,10 +43,17 @@ export function Index({ doc }: { doc: Resume }) {
 }
 
 export const getStaticPaths = () => {
-  const paths = allResumes.map((resume) => ({
-    params: { slug: [resume.slug] },
-  }));
-  paths.push({ params: { slug: [] } });
+  const isDev = process.env.NODE_ENV === 'development';
+
+  // In production, only serve the root path (/)
+  // In dev, also serve individual resume slugs for testing
+  const paths: { params: { slug: string[] } }[] = [{ params: { slug: [] } }];
+
+  if (isDev) {
+    allResumes.forEach((resume) => {
+      paths.push({ params: { slug: [resume.slug] } });
+    });
+  }
 
   return {
     paths,

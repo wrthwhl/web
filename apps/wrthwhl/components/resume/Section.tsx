@@ -23,11 +23,13 @@ export const Section = ({
   icon,
   children,
   noPrint,
+  columns,
 }: {
   title: string;
   icon?: string;
   children: ReactNode;
   noPrint?: boolean;
+  columns?: number;
 }) => {
   const Icon = icon ? iconMap[icon] : null;
 
@@ -44,7 +46,16 @@ export const Section = ({
         }
         labelPosition="center"
       />
-      {children}
+      {columns ? (
+        <div
+          className="my-phi-xl mx-phi flex flex-row justify-evenly print-avoid-break"
+          style={{ columns }}
+        >
+          {children}
+        </div>
+      ) : (
+        children
+      )}
     </FadeIn>
   );
 };

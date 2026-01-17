@@ -55,22 +55,20 @@ contact:
   </Training>
 </Section>
 
-<Section title="Skills" icon="lightbulb">
-  <Skills>
-    <SkillGroup rating={5}>
-      <Skill category="Management & Leadership">Team Building, Mentoring & Coaching, Cross-Functional Collaboration, Hiring, Feedback & Performance</Skill>
-      <Skill category="Software Engineering">Full-Stack Development (TypeScript, React, Node.js, Python), API Design, GraphQL, System Design</Skill>
-      <Skill category="Software Delivery">Code Review Practices, CI/CD, DevOps, DORA Metrics</Skill>
-      <Skill category="Product">Vision & Strategy, Roadmapping, Prioritization, Data-Driven Decision Making</Skill>
-    </SkillGroup>
+<Section title="Skills" icon="lightbulb" columns={2}>
+  <SkillGroup rating={5}>
+    <SkillCategory title="Management & Leadership">Team Building, Mentoring & Coaching, Cross-Functional Collaboration, Hiring, Feedback & Performance</SkillCategory>
+    <SkillCategory title="Software Engineering">Full-Stack Development (TypeScript, React, Node.js, Python), API Design, GraphQL, System Design</SkillCategory>
+    <SkillCategory title="Software Delivery">Code Review Practices, CI/CD, DevOps, DORA Metrics</SkillCategory>
+    <SkillCategory title="Product">Vision & Strategy, Roadmapping, Prioritization, Data-Driven Decision Making</SkillCategory>
+  </SkillGroup>
 
-    <SkillGroup rating={3}>
-      <Skill category="Management & Leadership">Distributed Team Leadership, Change Management, Culture Building</Skill>
-      <Skill category="Software Engineering">PostgreSQL, Database Design, Systems Thinking, Code Quality & Best Practices</Skill>
-      <Skill category="Software Delivery">Deployment Strategies, Build & Test Automation, Monitoring & Observability</Skill>
-      <Skill category="Data & ML">Model Evaluation, Computer Vision, Data Quality Management, Analytics & Reporting</Skill>
-    </SkillGroup>
-  </Skills>
+  <SkillGroup rating={3}>
+    <SkillCategory title="Management & Leadership">Distributed Team Leadership, Change Management, Culture Building</SkillCategory>
+    <SkillCategory title="Software Engineering">PostgreSQL, Database Design, Systems Thinking, Code Quality & Best Practices</SkillCategory>
+    <SkillCategory title="Software Delivery">Deployment Strategies, Build & Test Automation, Monitoring & Observability</SkillCategory>
+    <SkillCategory title="Data & ML">Model Evaluation, Computer Vision, Data Quality Management, Analytics & Reporting</SkillCategory>
+  </SkillGroup>
 </Section>
 
 <Section title="Contact" icon="contact" noPrint>

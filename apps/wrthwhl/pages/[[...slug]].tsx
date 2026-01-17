@@ -8,8 +8,7 @@ import {
   Section,
   Timeline,
   SkillGroup,
-  Skill,
-  Skills,
+  SkillCategory,
   Contact,
 } from '../components/resume';
 
@@ -20,8 +19,7 @@ const mdxComponents = {
   Job: Timeline.Item,
   Training: Timeline.Item,
   SkillGroup,
-  Skill,
-  Skills,
+  SkillCategory,
   Contact,
 };
 

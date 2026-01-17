@@ -39,25 +39,17 @@ export const SkillGroup = ({
   );
 };
 
-export const Skill = ({
-  category,
+export const SkillCategory = ({
+  title,
   children,
 }: {
-  category: string;
+  title: string;
   children: ReactNode;
 }) => {
   return (
     <FadeIn className="mt-phi-md">
-      <div className="text-muted-sm small-caps">{category}</div>
+      <div className="text-muted-sm small-caps">{title}</div>
       <div className="text-body text-xs">{children}</div>
     </FadeIn>
-  );
-};
-
-export const Skills = ({ children }: { children: ReactNode }) => {
-  return (
-    <div className="my-phi-xl mx-phi flex flex-row justify-evenly print-avoid-break">
-      {children}
-    </div>
   );
 };

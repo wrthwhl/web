@@ -13,7 +13,13 @@ const SCROLL_THRESHOLD = 80;
 const AVATAR_SIZE = 80;
 const AVATAR_MIN_SCALE = 0.618;
 
-export const Header = ({ children }: { children?: ReactNode }) => {
+export const Header = ({
+  children,
+  qrCode,
+}: {
+  children?: ReactNode;
+  qrCode?: string;
+}) => {
   const resume = useResume();
   const progress = useScrollProgress(SCROLL_THRESHOLD);
 
@@ -87,6 +93,12 @@ export const Header = ({ children }: { children?: ReactNode }) => {
           >
             Print
           </Button>
+          {qrCode && (
+            <div
+              className="hidden print:block"
+              dangerouslySetInnerHTML={{ __html: qrCode }}
+            />
+          )}
         </div>
       </div>
     </div>

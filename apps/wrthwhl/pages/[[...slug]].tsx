@@ -11,6 +11,7 @@ import {
   SkillCategory,
   Contact,
 } from '../components/resume';
+import { generateQRCode } from '../lib/qrcode';
 
 // MDX component mapping - only semantic components exposed
 const mdxComponents = {
@@ -23,14 +24,14 @@ const mdxComponents = {
   Contact,
 };
 
-export function Index({ doc }: { doc: Resume }) {
+export function Index({ doc, qrCode }: { doc: Resume; qrCode: string }) {
   const MdxContent = useMDXComponent(doc.body.code);
 
   return (
     <ResumeContext.Provider value={doc}>
       <GoldenPageLayout>
         <div className="max-w-[80ch] mx-auto pb-phi-xl">
-          <Header />
+          <Header qrCode={qrCode} />
           <div className="px-4">
             <MdxContent components={mdxComponents} />
           </div>
@@ -59,16 +60,17 @@ export const getStaticPaths = () => {
   };
 };
 
-export const getStaticProps = ({
+export const getStaticProps = async ({
   params,
 }: {
   params?: { slug?: string[] };
 }) => {
   const slug = params?.slug?.[0] || 'resume';
   const doc = allResumes.find((r) => r.slug === slug) || allResumes[0];
+  const qrCode = await generateQRCode('https://marco.wrthwhl.cloud');
 
   return {
-    props: { doc },
+    props: { doc, qrCode },
   };
 };
 

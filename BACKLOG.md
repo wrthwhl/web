@@ -184,11 +184,13 @@ CREATE TABLE sessions (
 
 ### Phase 2: Auth
 
-- [ ] Install WebAuthn dependencies (`@simplewebauthn/*`)
-- [ ] Implement passkey registration (one-time setup token)
-- [ ] Implement passkey login
-- [ ] Session management (cookies)
-- [ ] Protect dashboard routes with middleware
+- [x] Install WebAuthn dependencies (`@simplewebauthn/server`) - 2026-01-18
+- [x] Implement passkey registration (one-time setup token) - 2026-01-18
+- [x] Implement passkey login - 2026-01-18
+- [x] Session management (cookies, 30-day duration) - 2026-01-18
+- [x] Add requireAuth middleware for protected routes - 2026-01-18
+- [ ] Set SETUP_TOKEN secret in Cloudflare
+- [ ] Test auth flow end-to-end
 
 ### Phase 3: Dashboard (Tables)
 

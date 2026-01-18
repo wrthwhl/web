@@ -30,7 +30,7 @@ When work is ready:
 - Before shipping, review for simplifications, optimizations, or improvements
 - Clean up example/test files before committing
 - Don't modify auto-generated files (e.g., `next-env.d.ts`)
-- Use `SSH_AUTH_SOCK=$(launchctl getenv SSH_AUTH_SOCK)` for git operations (Proton Pass SSH agent)
+- SSH_AUTH_SOCK is configured for the macOS system agent (Proton Pass keys loaded via `pass-cli ssh-agent load`)
 
 ## Documentation & Progress Tracking
 

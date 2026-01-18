@@ -44,12 +44,7 @@
         }
       }
     },
-    "export": {
-      "executor": "@nx/next:export",
-      "options": {
-        "buildTarget": "wrthwhl:build:production"
-      }
-    },
+
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/wrthwhl"],

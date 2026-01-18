@@ -41,11 +41,11 @@
 - [x] Serve individual resume slugs only in development - 2026-01-18
 - [x] QR code for print version - 2026-01-18
 - [x] Refactored theme system to use Radix Colors - 2026-01-18
+- [x] Migrated from Netlify to Cloudflare Pages - 2026-01-18
 
 ## Ideas / Someday
 
 - Timeline with vertical line (explored, decided too invasive)
-- Migrate from Netlify to Cloudflare Pages (more generous free tier - could impact analytics architecture decisions)
 
 ## Tech Debt
 
@@ -57,20 +57,20 @@
 
 ## Overview
 
-Self-hosted analytics solution as a separate microfrontend in the monorepo with WebAuthn/Passkey authentication (via Proton Pass), Turso database (SQLite), and a dashboard UI.
+Self-hosted analytics solution as a separate microfrontend in the monorepo with WebAuthn/Passkey authentication (via Proton Pass), Cloudflare D1 database (SQLite at the edge), and a dashboard UI.
 
 ## Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                        Netlify                                   │
+│                     Cloudflare                                  │
 │  ┌─────────────────────┐      ┌─────────────────────────────┐  │
 │  │ marco.wrthwhl.cloud │      │ analytics.wrthwhl.cloud     │  │
 │  │                     │      │                             │  │
 │  │  Resume Site        │      │  Analytics App              │  │
-│  │  (apps/wrthwhl)     │      │  (apps/analytics)           │  │
+│  │  (Cloudflare Pages) │      │  (Cloudflare Workers)       │  │
 │  │                     │      │                             │  │
-│  │  /api/track ────────┼──────┼▶ /api/track (proxy)        │  │
+│  │  Static HTML/JS ────┼──────┼▶ /api/track                 │  │
 │  │                     │      │                             │  │
 │  │                     │      │  /api/stats (protected)     │  │
 │  │                     │      │  /dashboard (protected)     │  │
@@ -80,7 +80,7 @@ Self-hosted analytics solution as a separate microfrontend in the monorepo with 
                                                │
                                                ▼
                                         ┌──────────────┐
-                                        │    Turso     │
+                                        │      D1      │
                                         │   (SQLite)   │
                                         └──────────────┘
 ```
@@ -91,10 +91,11 @@ Self-hosted analytics solution as a separate microfrontend in the monorepo with 
 - **Dashboard:** Start with tables, add charts later
 - **Date range:** Last 7 days default
 - **Subdomain:** `analytics.wrthwhl.cloud`
-- **Database:** Turso (SQLite)
+- **Database:** Cloudflare D1 (SQLite at the edge)
 - **Auth:** WebAuthn/Passkey via Proton Pass
 - **Session duration:** 30 days
 - **Registration:** One-time setup token
+- **Resume hosting:** Cloudflare Pages (static export)
 
 ## Data Points
 
@@ -163,12 +164,12 @@ CREATE TABLE sessions (
 
 ### Phase 1: Foundation
 
-- [ ] Set up Turso account/database
-- [ ] Create `apps/analytics` Next.js app
+- [ ] Create `apps/analytics` Next.js app with Cloudflare Workers config
+- [ ] Create D1 database (`wrangler d1 create wrthwhl-analytics`)
 - [ ] Implement database schema
 - [ ] Implement `POST /api/track` (pageviews)
 - [ ] Add tracking script to resume site
-- [ ] Configure Netlify proxy (`/api/track` → analytics app)
+- [ ] Deploy analytics worker to `analytics.wrthwhl.cloud`
 
 ### Phase 2: Auth
 
@@ -200,27 +201,29 @@ CREATE TABLE sessions (
 - [ ] Referrer breakdown chart
 - [ ] Device/browser breakdown chart
 
-## Turso Setup Steps
+## D1 Setup Steps
 
 ```bash
-# 1. Install Turso CLI
-brew install tursodatabase/tap/turso
+# 1. Create D1 database
+pnpm exec wrangler d1 create wrthwhl-analytics
 
-# 2. Sign up / login
-turso auth signup   # or: turso auth login
+# 2. Copy database_id to wrangler.jsonc in apps/analytics
 
-# 3. Create database
-turso db create wrthwhl-analytics
+# 3. Apply schema
+pnpm exec wrangler d1 execute wrthwhl-analytics --file=schema.sql
 
-# 4. Get connection URL
-turso db show wrthwhl-analytics --url
+# 4. Deploy analytics worker
+cd apps/analytics && pnpm exec wrangler deploy
+```
 
-# 5. Create auth token
-turso db tokens create wrthwhl-analytics
+## Resume Site Deployment (Cloudflare Pages)
 
-# 6. Add to environment variables (Netlify + local .env)
-# TURSO_DATABASE_URL=libsql://wrthwhl-analytics-<username>.turso.io
-# TURSO_AUTH_TOKEN=<token>
+```bash
+# Build static export
+pnpm build
+
+# Deploy to production
+pnpm exec wrangler pages deploy dist/apps/wrthwhl/.next --project-name wrthwhl --branch main
 ```
 
 ## File Structure
@@ -228,8 +231,9 @@ turso db tokens create wrthwhl-analytics
 ```
 apps/
   analytics/
-    pages/
-      api/
+    src/
+      index.ts          # Worker entry point
+      routes/
         track.ts
         event.ts
         auth/
@@ -242,20 +246,15 @@ apps/
           referrers.ts
           utm.ts
           events.ts
-      login.tsx
-      dashboard/
-        index.tsx
-        referrers.tsx
-        events.tsx
-    lib/
-      db.ts
-      auth.ts
-      session.ts
-    components/
-      ...
+      lib/
+        db.ts
+        auth.ts
+        session.ts
+    wrangler.jsonc
+    schema.sql
 
   wrthwhl/
     lib/
-      analytics.ts
-    netlify.toml  # Add proxy rule
+      analytics.ts      # Client-side tracking
+    next.config.js      # output: 'export' for static
 ```

@@ -35,7 +35,6 @@ const pageLayout = (title: string, content: string) => html`
       <meta charset="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <title>${title} - wrthwhl analytics</title>
-      <script src="https://unpkg.com/@simplewebauthn/browser/dist/bundle/index.umd.min.js"></script>
       <style>
         * {
           box-sizing: border-box;
@@ -120,6 +119,27 @@ const pageLayout = (title: string, content: string) => html`
   </html>
 `;
 
+// Helper functions for WebAuthn (shared between pages)
+const webauthnHelpers = `
+  // Base64URL encode/decode helpers
+  function base64URLToBuffer(base64url) {
+    const base64 = base64url.replace(/-/g, '+').replace(/_/g, '/');
+    const pad = base64.length % 4;
+    const padded = pad ? base64 + '='.repeat(4 - pad) : base64;
+    const binary = atob(padded);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    return bytes.buffer;
+  }
+  
+  function bufferToBase64URL(buffer) {
+    const bytes = new Uint8Array(buffer);
+    let binary = '';
+    for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+    return btoa(binary).replace(/\\+/g, '-').replace(/\\//g, '_').replace(/=/g, '');
+  }
+`;
+
 app.get('/register', (c) => {
   return c.html(
     pageLayout(
@@ -131,6 +151,8 @@ app.get('/register', (c) => {
     <div id="status" class="status"></div>
     <div class="link"><a href="/login">Already registered? Login</a></div>
     <script>
+      ${webauthnHelpers}
+      
       const btn = document.getElementById('registerBtn');
       const status = document.getElementById('status');
       
@@ -155,14 +177,50 @@ app.get('/register', (c) => {
           
           const { options, userId } = await optRes.json();
           
-          // Start WebAuthn registration
-          const credential = await SimpleWebAuthnBrowser.startRegistration({ optionsJSON: options });
+          // Convert options for native WebAuthn API
+          const publicKeyOptions = {
+            challenge: base64URLToBuffer(options.challenge),
+            rp: options.rp,
+            user: {
+              ...options.user,
+              id: base64URLToBuffer(options.user.id)
+            },
+            pubKeyCredParams: options.pubKeyCredParams,
+            timeout: options.timeout,
+            attestation: options.attestation || 'none',
+            authenticatorSelection: options.authenticatorSelection
+          };
+          
+          if (options.excludeCredentials) {
+            publicKeyOptions.excludeCredentials = options.excludeCredentials.map(c => ({
+              ...c,
+              id: base64URLToBuffer(c.id)
+            }));
+          }
+          
+          // Call native WebAuthn API
+          const credential = await navigator.credentials.create({ publicKey: publicKeyOptions });
+          
+          // Convert response for server
+          const response = {
+            id: credential.id,
+            rawId: bufferToBase64URL(credential.rawId),
+            type: credential.type,
+            response: {
+              clientDataJSON: bufferToBase64URL(credential.response.clientDataJSON),
+              attestationObject: bufferToBase64URL(credential.response.attestationObject)
+            }
+          };
+          
+          if (credential.response.getTransports) {
+            response.response.transports = credential.response.getTransports();
+          }
           
           // Verify with server
           const verifyRes = await fetch('/api/auth/register/verify', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userId, response: credential }),
+            body: JSON.stringify({ userId, response }),
             credentials: 'include'
           });
           
@@ -198,6 +256,8 @@ app.get('/login', (c) => {
     <div id="status" class="status"></div>
     <div class="link"><a href="/register">Need to register?</a></div>
     <script>
+      ${webauthnHelpers}
+      
       const btn = document.getElementById('loginBtn');
       const status = document.getElementById('status');
       
@@ -221,14 +281,42 @@ app.get('/login', (c) => {
           
           const { options, challengeId } = await optRes.json();
           
-          // Start WebAuthn authentication
-          const credential = await SimpleWebAuthnBrowser.startAuthentication({ optionsJSON: options });
+          // Convert options for native WebAuthn API
+          const publicKeyOptions = {
+            challenge: base64URLToBuffer(options.challenge),
+            rpId: options.rpId,
+            timeout: options.timeout,
+            userVerification: options.userVerification
+          };
+          
+          if (options.allowCredentials) {
+            publicKeyOptions.allowCredentials = options.allowCredentials.map(c => ({
+              ...c,
+              id: base64URLToBuffer(c.id)
+            }));
+          }
+          
+          // Call native WebAuthn API
+          const credential = await navigator.credentials.get({ publicKey: publicKeyOptions });
+          
+          // Convert response for server
+          const response = {
+            id: credential.id,
+            rawId: bufferToBase64URL(credential.rawId),
+            type: credential.type,
+            response: {
+              clientDataJSON: bufferToBase64URL(credential.response.clientDataJSON),
+              authenticatorData: bufferToBase64URL(credential.response.authenticatorData),
+              signature: bufferToBase64URL(credential.response.signature),
+              userHandle: credential.response.userHandle ? bufferToBase64URL(credential.response.userHandle) : null
+            }
+          };
           
           // Verify with server
           const verifyRes = await fetch('/api/auth/login/verify', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ challengeId, response: credential }),
+            body: JSON.stringify({ challengeId, response }),
             credentials: 'include'
           });
           

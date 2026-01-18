@@ -156,7 +156,7 @@ app.get('/register', (c) => {
           const { options, userId } = await optRes.json();
           
           // Start WebAuthn registration
-          const credential = await SimpleWebAuthnBrowser.startRegistration(options);
+          const credential = await SimpleWebAuthnBrowser.startRegistration({ optionsJSON: options });
           
           // Verify with server
           const verifyRes = await fetch('/api/auth/register/verify', {
@@ -222,7 +222,7 @@ app.get('/login', (c) => {
           const { options, challengeId } = await optRes.json();
           
           // Start WebAuthn authentication
-          const credential = await SimpleWebAuthnBrowser.startAuthentication(options);
+          const credential = await SimpleWebAuthnBrowser.startAuthentication({ optionsJSON: options });
           
           // Verify with server
           const verifyRes = await fetch('/api/auth/login/verify', {

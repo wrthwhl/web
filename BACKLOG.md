@@ -2,7 +2,7 @@
 
 ## In Progress
 
-- [ ] Analytics microfrontend - Phase 2 (Auth) is next
+- [ ] Analytics microfrontend - Phase 3 (Dashboard) is next
 
 ## Features
 
@@ -149,6 +149,16 @@ CREATE TABLE credentials (
   id TEXT PRIMARY KEY,
   public_key TEXT,
   counter INTEGER,
+  device_type TEXT,       -- 'singleDevice' or 'multiDevice'
+  backed_up INTEGER,      -- 0 or 1 (boolean)
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- WebAuthn challenges (temporary, 5-minute TTL)
+CREATE TABLE challenges (
+  id TEXT PRIMARY KEY,
+  challenge TEXT,
+  expires_at DATETIME,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -182,7 +192,7 @@ CREATE TABLE sessions (
 - [x] Add Cloudflare API token to GitHub secrets - 2026-01-18
 - [x] Configure GitHub branch protection (require PR + status checks) - 2026-01-18
 
-### Phase 2: Auth
+### Phase 2: Auth (Complete)
 
 - [x] Install WebAuthn dependencies (`@simplewebauthn/server`) - 2026-01-18
 - [x] Implement passkey registration - 2026-01-18
@@ -190,13 +200,16 @@ CREATE TABLE sessions (
 - [x] Session management (cookies, 30-day duration) - 2026-01-18
 - [x] Add requireAuth middleware for protected routes - 2026-01-18
 - [x] Simplify to solo mode (first-come-first-served, then session-gated) - 2026-01-18
-- [ ] Test auth flow end-to-end
+- [x] Add /register and /login pages - 2026-01-18
+- [x] Test auth flow end-to-end - 2026-01-18
 
 #### Access Model (Solo Mode)
 
 - First registration open (no credentials exist → anyone can register)
 - After first registration, adding passkeys requires active session
 - Single user with multiple backup passkeys supported
+- Uses discoverable credentials (no allowCredentials in login options) for Proton Pass compatibility
+- Credential IDs stored as Base64URLString (matching SimpleWebAuthn format)
 - Future: invite codes for multi-user if needed
 
 ### Phase 3: Dashboard (Tables)
@@ -256,7 +269,8 @@ pnpm exec wrangler pages deploy dist/apps/wrthwhl/.next --project-name wrthwhl -
 apps/
   analytics/
     src/
-      index.ts          # Hono worker entry point
+      index.ts          # Hono worker entry point + auth pages
+      auth.ts           # WebAuthn registration/login routes
       index.test.ts     # API tests
     wrangler.jsonc
     schema.sql

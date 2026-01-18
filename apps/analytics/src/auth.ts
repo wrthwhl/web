@@ -29,6 +29,9 @@ const origin = `https://${rpID}`;
 // Session duration: 30 days
 const SESSION_DURATION_MS = 30 * 24 * 60 * 60 * 1000;
 
+// Challenge duration: 5 minutes
+const CHALLENGE_DURATION_MS = 5 * 60 * 1000;
+
 // Helper to generate secure random ID
 function generateId(): string {
   const bytes = new Uint8Array(32);
@@ -38,8 +41,47 @@ function generateId(): string {
     .join('');
 }
 
-// Store challenges temporarily (in production, use KV or D1)
-const challenges = new Map<string, string>();
+// Helper to store challenge in D1
+async function storeChallenge(
+  db: D1Database,
+  id: string,
+  challenge: string,
+): Promise<void> {
+  const expiresAt = new Date(Date.now() + CHALLENGE_DURATION_MS).toISOString();
+  await db
+    .prepare(
+      `INSERT INTO challenges (id, challenge, expires_at) VALUES (?, ?, ?)`,
+    )
+    .bind(id, challenge, expiresAt)
+    .run();
+}
+
+// Helper to retrieve and delete challenge from D1
+async function consumeChallenge(
+  db: D1Database,
+  id: string,
+): Promise<string | null> {
+  const result = await db
+    .prepare(
+      `SELECT challenge FROM challenges WHERE id = ? AND expires_at > datetime('now')`,
+    )
+    .bind(id)
+    .first<{ challenge: string }>();
+
+  if (result) {
+    // Delete the challenge (one-time use)
+    await db.prepare(`DELETE FROM challenges WHERE id = ?`).bind(id).run();
+    return result.challenge;
+  }
+  return null;
+}
+
+// Clean up expired challenges - exported for use in scheduled tasks
+export async function cleanupExpiredChallenges(db: D1Database): Promise<void> {
+  await db
+    .prepare(`DELETE FROM challenges WHERE expires_at <= datetime('now')`)
+    .run();
+}
 
 // ============================================
 // Registration Flow
@@ -87,8 +129,8 @@ auth.post('/register/options', async (c) => {
     },
   });
 
-  // Store challenge for verification
-  challenges.set(userId, options.challenge);
+  // Store challenge in D1 for verification
+  await storeChallenge(c.env.DB, userId, options.challenge);
 
   return c.json({ options, userId });
 });
@@ -100,7 +142,7 @@ auth.post('/register/verify', async (c) => {
     response: RegistrationResponseJSON;
   };
 
-  const expectedChallenge = challenges.get(userId);
+  const expectedChallenge = await consumeChallenge(c.env.DB, userId);
   if (!expectedChallenge) {
     return c.json({ error: 'Challenge not found or expired' }, 400);
   }
@@ -123,18 +165,19 @@ auth.post('/register/verify', async (c) => {
     // Store credential in database
     // credential.id is already a Base64URLString, store as-is
     await c.env.DB.prepare(
-      `INSERT INTO credentials (id, public_key, counter, created_at) 
-       VALUES (?, ?, ?, datetime('now'))`,
+      `INSERT INTO credentials (id, public_key, counter, device_type, backed_up, created_at) 
+       VALUES (?, ?, ?, ?, ?, datetime('now'))`,
     )
       .bind(
         credential.id,
         Buffer.from(credential.publicKey).toString('base64'),
         credential.counter,
+        credentialDeviceType,
+        credentialBackedUp ? 1 : 0,
       )
       .run();
 
-    // Clean up challenge
-    challenges.delete(userId);
+    // Challenge already consumed by consumeChallenge() above
 
     // Create session
     const sessionId = generateId();
@@ -182,18 +225,17 @@ auth.post('/login/options', async (c) => {
     return c.json({ error: 'No registered credentials' }, 400);
   }
 
+  // Use discoverable credentials (passkeys) - don't pass allowCredentials.
+  // This lets authenticators like Proton Pass offer all passkeys for this domain,
+  // rather than requiring a specific credential ID match.
   const options = await generateAuthenticationOptions({
     rpID,
     userVerification: 'preferred',
-    // Don't pass allowCredentials - let the authenticator offer discoverable credentials
-    // allowCredentials: credentials.results.map((cred) => ({
-    //   id: cred.id,
-    // })),
   });
 
-  // Store challenge
+  // Store challenge in D1
   const challengeId = generateId();
-  challenges.set(challengeId, options.challenge);
+  await storeChallenge(c.env.DB, challengeId, options.challenge);
 
   return c.json({ options, challengeId });
 });
@@ -205,7 +247,7 @@ auth.post('/login/verify', async (c) => {
     response: AuthenticationResponseJSON;
   };
 
-  const expectedChallenge = challenges.get(challengeId);
+  const expectedChallenge = await consumeChallenge(c.env.DB, challengeId);
   if (!expectedChallenge) {
     return c.json({ error: 'Challenge not found or expired' }, 400);
   }
@@ -250,8 +292,7 @@ auth.post('/login/verify', async (c) => {
       .bind(verification.authenticationInfo.newCounter, credential.id)
       .run();
 
-    // Clean up challenge
-    challenges.delete(challengeId);
+    // Challenge already consumed by consumeChallenge() above
 
     // Create session
     const sessionId = generateId();

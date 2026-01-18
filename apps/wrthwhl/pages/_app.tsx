@@ -1,10 +1,17 @@
 import { AppProps } from 'next/app';
 import Head from 'next/head';
+import { useEffect } from 'react';
 import { ThemeProvider } from '../lib/ThemeContext';
+import { trackPageview } from '../lib/analytics';
 import '../styles/globals.css';
 
 export default function App(props: AppProps) {
   const { Component, pageProps } = props;
+
+  // Track pageview on mount
+  useEffect(() => {
+    trackPageview();
+  }, []);
 
   return (
     <>

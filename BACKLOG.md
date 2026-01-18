@@ -164,12 +164,12 @@ CREATE TABLE sessions (
 
 ### Phase 1: Foundation
 
-- [ ] Create `apps/analytics` Next.js app with Cloudflare Workers config
-- [ ] Create D1 database (`wrangler d1 create wrthwhl-analytics`)
-- [ ] Implement database schema
-- [ ] Implement `POST /api/track` (pageviews)
-- [ ] Add tracking script to resume site
-- [ ] Deploy analytics worker to `analytics.wrthwhl.cloud`
+- [x] Create `apps/analytics` Cloudflare Worker with Hono - 2026-01-18
+- [x] Create D1 database (`wrangler d1 create wrthwhl-analytics`) - 2026-01-18
+- [x] Implement database schema - 2026-01-18
+- [x] Implement `POST /api/track` (pageviews + events) - 2026-01-18
+- [x] Add tracking script to resume site - 2026-01-18
+- [x] Deploy analytics worker to `analytics.wrthwhl.cloud` - 2026-01-18
 
 ### Phase 2: Auth
 

@@ -1,0 +1,17 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "analytics",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-01-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "wrthwhl-analytics",
+      "database_id": "5dc4a47e-23b1-4723-a794-abf48f2ff5cd",
+    },
+  ],
+  "routes": [
+    { "pattern": "analytics.wrthwhl.cloud/*", "zone_name": "wrthwhl.cloud" },
+  ],
+}

@@ -153,7 +153,7 @@ app.get('/register', (c) => {
             throw new Error(err.error || 'Failed to get registration options');
           }
           
-          const options = await optRes.json();
+          const { options, userId } = await optRes.json();
           
           // Start WebAuthn registration
           const credential = await SimpleWebAuthnBrowser.startRegistration(options);
@@ -162,7 +162,7 @@ app.get('/register', (c) => {
           const verifyRes = await fetch('/api/auth/register/verify', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(credential),
+            body: JSON.stringify({ userId, response: credential }),
             credentials: 'include'
           });
           
@@ -219,7 +219,7 @@ app.get('/login', (c) => {
             throw new Error(err.error || 'Failed to get login options');
           }
           
-          const options = await optRes.json();
+          const { options, challengeId } = await optRes.json();
           
           // Start WebAuthn authentication
           const credential = await SimpleWebAuthnBrowser.startAuthentication(options);
@@ -228,7 +228,7 @@ app.get('/login', (c) => {
           const verifyRes = await fetch('/api/auth/login/verify', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(credential),
+            body: JSON.stringify({ challengeId, response: credential }),
             credentials: 'include'
           });
           

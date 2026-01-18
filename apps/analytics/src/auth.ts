@@ -188,9 +188,10 @@ auth.post('/login/options', async (c) => {
   const options = await generateAuthenticationOptions({
     rpID,
     userVerification: 'preferred',
-    allowCredentials: credentials.results.map((cred) => ({
-      id: cred.id,
-    })),
+    // Don't pass allowCredentials - let the authenticator offer discoverable credentials
+    // allowCredentials: credentials.results.map((cred) => ({
+    //   id: cred.id,
+    // })),
   });
 
   // Store challenge

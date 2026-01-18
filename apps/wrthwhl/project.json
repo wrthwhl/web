@@ -18,7 +18,8 @@
           "outputPath": "apps/wrthwhl"
         },
         "production": {}
-      }
+      },
+      "dependsOn": ["content:build"]
     },
     "dev": {
       "executor": "nx:run-commands",

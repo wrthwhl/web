@@ -13,7 +13,6 @@ import type {
 
 type Bindings = {
   DB: D1Database;
-  SETUP_TOKEN?: string; // One-time setup token from env
 };
 
 type Variables = {
@@ -48,9 +47,6 @@ const challenges = new Map<string, string>();
 
 // Step 1: Generate registration options
 auth.post('/register/options', async (c) => {
-  // Check setup token for first-time registration
-  const { setupToken } = await c.req.json();
-
   // Check if any credentials exist
   const existingCred = await c.env.DB.prepare(
     'SELECT COUNT(*) as count FROM credentials',
@@ -58,16 +54,9 @@ auth.post('/register/options', async (c) => {
 
   const isFirstRegistration = !existingCred || existingCred.count === 0;
 
-  // If first registration, require setup token
-  if (isFirstRegistration) {
-    if (!c.env.SETUP_TOKEN) {
-      return c.json({ error: 'Setup token not configured' }, 500);
-    }
-    if (setupToken !== c.env.SETUP_TOKEN) {
-      return c.json({ error: 'Invalid setup token' }, 401);
-    }
-  } else {
-    // Subsequent registrations require existing session
+  // First registration is open (first-come-first-served)
+  // Subsequent registrations require active session (adding backup passkeys)
+  if (!isFirstRegistration) {
     const sessionId = getCookie(c, 'session');
     if (!sessionId) {
       return c.json({ error: 'Authentication required' }, 401);

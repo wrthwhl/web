@@ -4,7 +4,6 @@ import auth from './auth';
 
 type Bindings = {
   DB: D1Database;
-  SETUP_TOKEN?: string;
 };
 
 const app = new Hono<{ Bindings: Bindings }>();

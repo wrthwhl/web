@@ -45,6 +45,7 @@
 ## Ideas / Someday
 
 - Timeline with vertical line (explored, decided too invasive)
+- Migrate from Netlify to Cloudflare Pages (more generous free tier - could impact analytics architecture decisions)
 
 ## Tech Debt
 

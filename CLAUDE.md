@@ -26,6 +26,12 @@ When work is ready:
 - Prefer editing existing files over creating new ones, except when separation of concerns, modularity, single-responsibility, or other clean code principles warrant new files
 - Styling belongs in the theme (globals.css), not in components
 
+## Naming Conventions
+
+- **React components:** PascalCase filenames (`Button.tsx`, `Avatar.tsx`, `ThemeSwitcher.tsx`)
+- **Non-component modules:** camelCase or kebab-case (`utils.ts`, `analytics.ts`)
+- **Import paths must match exact filename casing** - macOS is case-insensitive but other systems aren't
+
 ## Workflow
 
 - Always verify builds pass (`pnpm build`) before asking to ship

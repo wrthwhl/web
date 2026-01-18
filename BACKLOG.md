@@ -179,7 +179,8 @@ CREATE TABLE sessions (
 - [x] Create deploy.yml workflow (build + deploy affected) - 2026-01-18
 - [x] Add Vitest tests for wrthwhl (analytics helpers) - 2026-01-18
 - [x] Add Vitest tests for analytics (API endpoints) - 2026-01-18
-- [ ] Add Cloudflare API token to GitHub secrets
+- [x] Add Cloudflare API token to GitHub secrets - 2026-01-18
+- [x] Configure GitHub branch protection (require PR + status checks) - 2026-01-18
 
 ### Phase 2: Auth
 

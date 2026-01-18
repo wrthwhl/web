@@ -45,7 +45,7 @@ Before committing, verify:
    - Tests pass (`pnpm nx run-many -t test`)
    - Build passes (`pnpm nx run-many -t build`)
    - Code is simplified where possible
-   - Clean code principles met (complexity, maintainability, testability)
+   - Clean code principles met (complexity, maintainability, testability, comprehensibility)
 
 3. **Improvements considered**
    - Review for simplifications, optimizations

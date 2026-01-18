@@ -171,6 +171,12 @@ CREATE TABLE sessions (
 - [x] Add tracking script to resume site - 2026-01-18
 - [x] Deploy analytics worker to `analytics.wrthwhl.cloud` - 2026-01-18
 
+### Phase 1.5: CI/CD
+
+- [ ] Set up GitHub Actions for wrthwhl (Cloudflare Pages)
+- [ ] Set up GitHub Actions for analytics (Cloudflare Workers)
+- [ ] Add Cloudflare API token to GitHub secrets
+
 ### Phase 2: Auth
 
 - [ ] Install WebAuthn dependencies (`@simplewebauthn/*`)

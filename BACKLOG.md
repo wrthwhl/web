@@ -2,7 +2,7 @@
 
 ## In Progress
 
-- [ ] Analytics microfrontend (see detailed plan below)
+- [ ] Analytics microfrontend - Phase 2 (Auth) is next
 
 ## Features
 
@@ -46,6 +46,7 @@
 ## Ideas / Someday
 
 - Timeline with vertical line (explored, decided too invasive)
+- Explore Drizzle ORM for D1 migrations (type-safe, better migration workflow)
 
 ## Tech Debt
 
@@ -173,8 +174,11 @@ CREATE TABLE sessions (
 
 ### Phase 1.5: CI/CD
 
-- [ ] Set up GitHub Actions for wrthwhl (Cloudflare Pages)
-- [ ] Set up GitHub Actions for analytics (Cloudflare Workers)
+- [x] Connect Nx Cloud for remote caching - 2026-01-18
+- [x] Create pr-check.yml workflow (lint, test, build) - 2026-01-18
+- [x] Create deploy.yml workflow (build + deploy affected) - 2026-01-18
+- [x] Add Vitest tests for wrthwhl (analytics helpers) - 2026-01-18
+- [x] Add Vitest tests for analytics (API endpoints) - 2026-01-18
 - [ ] Add Cloudflare API token to GitHub secrets
 
 ### Phase 2: Auth
@@ -235,32 +239,25 @@ pnpm exec wrangler pages deploy dist/apps/wrthwhl/.next --project-name wrthwhl -
 ## File Structure
 
 ```
+.github/workflows/
+  pr-check.yml          # Lint, test, build on PRs
+  deploy.yml            # Deploy affected on push to main
+
 apps/
   analytics/
     src/
-      index.ts          # Worker entry point
-      routes/
-        track.ts
-        event.ts
-        auth/
-          register.ts
-          login.ts
-          verify.ts
-          logout.ts
-        stats/
-          overview.ts
-          referrers.ts
-          utm.ts
-          events.ts
-      lib/
-        db.ts
-        auth.ts
-        session.ts
+      index.ts          # Hono worker entry point
+      index.test.ts     # API tests
     wrangler.jsonc
     schema.sql
+    vitest.config.ts
+    project.json
 
   wrthwhl/
     lib/
       analytics.ts      # Client-side tracking
+      analytics.test.ts # Helper tests
+    vitest.config.ts
     next.config.js      # output: 'export' for static
+    project.json
 ```

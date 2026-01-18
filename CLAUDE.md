@@ -12,10 +12,12 @@ When work is ready:
 
 ## Project
 
-- **Monorepo:** apps/wrthwhl (Next.js site), libs/content (MDX content)
-- **Stack:** Next.js, Tailwind CSS v4, Contentlayer, TypeScript
+- **Monorepo:** apps/wrthwhl (Next.js site), apps/analytics (Cloudflare Worker), libs/content (MDX content)
+- **Stack:** Next.js, Tailwind CSS v4, Contentlayer, TypeScript, Hono (analytics)
 - **Package manager:** pnpm
 - **Commands:** `pnpm build`, `pnpm dev`
+- **Trunk branch:** `main` (not master)
+- **Hosting:** Cloudflare Pages (wrthwhl), Cloudflare Workers (analytics)
 
 ## Code Style
 
@@ -27,10 +29,32 @@ When work is ready:
 ## Workflow
 
 - Always verify builds pass (`pnpm build`) before asking to ship
-- Before shipping, review for simplifications, optimizations, or improvements
-- Clean up example/test files before committing
 - Don't modify auto-generated files (e.g., `next-env.d.ts`)
 - SSH_AUTH_SOCK is configured for the macOS system agent (Proton Pass keys loaded via `pass-cli ssh-agent load`)
+
+## Pre-Commit Checklist
+
+Before committing, verify:
+
+1. **Repo is clean and tidy**
+   - No stray/temp files (logs, test outputs, etc.)
+   - Obsolete config files removed (e.g., old jest.config when using vitest)
+
+2. **Code quality**
+   - Lint passes (`pnpm nx run-many -t lint`)
+   - Tests pass (`pnpm nx run-many -t test`)
+   - Build passes (`pnpm nx run-many -t build`)
+   - Code is simplified where possible
+   - Clean code principles met (complexity, maintainability, testability)
+
+3. **Improvements considered**
+   - Review for simplifications, optimizations
+   - Raise and discuss any improvements worth making
+
+4. **Documentation is coherent**
+   - BACKLOG.md is up to date (completed items marked, phases accurate)
+   - CLAUDE.md reflects current project state
+   - Code comments where non-obvious
 
 ## Documentation & Progress Tracking
 

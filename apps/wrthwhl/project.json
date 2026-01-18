@@ -46,10 +46,10 @@
     },
 
     "test": {
-      "executor": "@nx/jest:jest",
+      "executor": "@nx/vitest:test",
       "outputs": ["{workspaceRoot}/coverage/apps/wrthwhl"],
       "options": {
-        "jestConfig": "apps/wrthwhl/jest.config.ts",
+        "config": "apps/wrthwhl/vitest.config.ts",
         "passWithNoTests": true
       }
     },
@@ -59,6 +59,13 @@
       "options": {
         "lintFilePatterns": ["apps/wrthwhl/**/*.{ts,tsx,js,jsx}"]
       }
+    },
+    "deploy": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "pnpm exec wrangler pages deploy dist/apps/wrthwhl/.next --project-name wrthwhl --branch main --commit-dirty=true"
+      },
+      "dependsOn": ["build"]
     }
   }
 }

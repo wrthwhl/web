@@ -20,7 +20,7 @@ function getSessionId(): string {
 }
 
 // Detect device type
-function getDeviceType(): string {
+export function getDeviceType(): string {
   if (typeof window === 'undefined') return 'unknown';
   const ua = navigator.userAgent;
   if (/mobile/i.test(ua)) return 'mobile';
@@ -29,7 +29,7 @@ function getDeviceType(): string {
 }
 
 // Detect browser
-function getBrowser(): string {
+export function getBrowser(): string {
   if (typeof window === 'undefined') return 'unknown';
   const ua = navigator.userAgent;
   if (ua.includes('Firefox')) return 'Firefox';

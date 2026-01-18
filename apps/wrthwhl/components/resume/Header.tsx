@@ -36,6 +36,7 @@ export const Header = ({ qrCode }: { qrCode?: QRCodeData }) => {
           backgroundColor: `color-mix(in srgb, var(--theme-bg-page), var(--theme-bg-contrast) calc(var(--progress) * 100%))`,
           paddingTop: `calc(1.618em - var(--progress) * 1em)`,
           paddingBottom: `calc(1.618em - var(--progress) * 1em)`,
+          borderRadius: `0 0 3.182em 0.382em`,
         } as React.CSSProperties
       }
     >

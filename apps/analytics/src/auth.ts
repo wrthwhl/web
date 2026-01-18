@@ -215,11 +215,14 @@ auth.post('/login/verify', async (c) => {
 
   const credentialId = response.id;
 
-  // Get credential from database
+  // Convert base64url to base64 for DB lookup (authenticators return base64url)
+  const credentialIdBase64 = credentialId.replace(/-/g, '+').replace(/_/g, '/');
+
+  // Get credential from database (try both formats)
   const credential = await c.env.DB.prepare(
-    'SELECT * FROM credentials WHERE id = ?',
+    'SELECT * FROM credentials WHERE id = ? OR id = ?',
   )
-    .bind(credentialId)
+    .bind(credentialId, credentialIdBase64)
     .first<{
       id: string;
       public_key: string;
@@ -247,9 +250,9 @@ auth.post('/login/verify', async (c) => {
       return c.json({ error: 'Verification failed' }, 400);
     }
 
-    // Update counter
+    // Update counter (use the ID format from the DB)
     await c.env.DB.prepare('UPDATE credentials SET counter = ? WHERE id = ?')
-      .bind(verification.authenticationInfo.newCounter, credentialId)
+      .bind(verification.authenticationInfo.newCounter, credential.id)
       .run();
 
     // Clean up challenge

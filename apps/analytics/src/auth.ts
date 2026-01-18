@@ -121,12 +121,13 @@ auth.post('/register/verify', async (c) => {
       verification.registrationInfo;
 
     // Store credential in database
+    // credential.id is already a Base64URLString, store as-is
     await c.env.DB.prepare(
       `INSERT INTO credentials (id, public_key, counter, created_at) 
        VALUES (?, ?, ?, datetime('now'))`,
     )
       .bind(
-        Buffer.from(credential.id).toString('base64url'),
+        credential.id,
         Buffer.from(credential.publicKey).toString('base64'),
         credential.counter,
       )
@@ -143,11 +144,7 @@ auth.post('/register/verify', async (c) => {
       `INSERT INTO sessions (id, credential_id, expires_at, created_at) 
        VALUES (?, ?, ?, datetime('now'))`,
     )
-      .bind(
-        sessionId,
-        Buffer.from(credential.id).toString('base64url'),
-        expiresAt,
-      )
+      .bind(sessionId, credential.id, expiresAt)
       .run();
 
     // Set session cookie
@@ -213,16 +210,14 @@ auth.post('/login/verify', async (c) => {
     return c.json({ error: 'Challenge not found or expired' }, 400);
   }
 
+  // response.id is a Base64URLString, same format as stored in DB
   const credentialId = response.id;
 
-  // Convert base64url to base64 for DB lookup (authenticators return base64url)
-  const credentialIdBase64 = credentialId.replace(/-/g, '+').replace(/_/g, '/');
-
-  // Get credential from database (try both formats)
+  // Get credential from database
   const credential = await c.env.DB.prepare(
-    'SELECT * FROM credentials WHERE id = ? OR id = ?',
+    'SELECT * FROM credentials WHERE id = ?',
   )
-    .bind(credentialId, credentialIdBase64)
+    .bind(credentialId)
     .first<{
       id: string;
       public_key: string;

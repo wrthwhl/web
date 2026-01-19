@@ -214,10 +214,27 @@ CREATE TABLE sessions (
 
 ### Phase 3: Dashboard (Tables)
 
-- [ ] Stats API endpoints (overview, referrers, UTM)
-- [ ] Dashboard pages with date range picker
-- [ ] Referrer detail view
-- [ ] UTM breakdown (QR code tracking)
+**Architecture:**
+
+- `apps/console/` - Next.js app with shadcn for Dashboard UI
+- `apps/analytics/` - Cloudflare Worker as REST API only (remove HTML rendering)
+
+**Tasks:**
+
+- [ ] Create `apps/console` Next.js app with shadcn
+- [ ] Move /login, /register pages from Worker to console
+- [ ] Strip Worker down to API only
+- [ ] Build Stats API endpoints:
+  - `GET /api/stats/overview` - totals, top referrers (last 7d default)
+  - `GET /api/stats/referrers` - referrer breakdown with counts
+  - `GET /api/stats/utm` - UTM parameter breakdown
+  - All protected via `requireAuth`, support `?from=&to=` params
+- [ ] Build Dashboard UI (shadcn):
+  - Date range picker (7d default, 30d, custom)
+  - Overview stats cards
+  - Referrers table
+  - UTM breakdown table
+- [ ] Deploy console to Cloudflare Pages (console.wrthwhl.cloud)
 
 ### Phase 4: Enhanced Tracking
 

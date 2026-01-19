@@ -1,0 +1,158 @@
+/* 
+ * Base theme CSS - shared design tokens
+ * Apps should import this and then define their brand colors
+ */
+
+@import 'tailwindcss';
+
+/* Phi-based spacing scale */
+@theme {
+  --spacing-phi-3xs: 0.146rem;
+  --spacing-phi-2xs: 0.236rem;
+  --spacing-phi-xs: 0.382rem;
+  --spacing-phi-sm: 0.618rem;
+  --spacing-phi-md: 1rem;
+  --spacing-phi-lg: 1.618rem;
+  --spacing-phi-xl: 2.618rem;
+  --spacing-phi-2xl: 4.236rem;
+  --spacing-phi-3xl: 6.854rem;
+
+  /* Border radius (phi-based) */
+  --radius-phi-sm: 0.382rem;
+  --radius-phi: 0.618rem;
+  --radius-phi-lg: 1rem;
+  --radius-phi-xl: 1.618rem;
+}
+
+/* Base layer - semantic tokens that apps override */
+@layer base {
+  :root {
+    /* Colors - apps define these */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 3.9%;
+    --radius: 0.618rem;
+  }
+
+  .dark {
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 9%;
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 0 0% 83.1%;
+  }
+}
+
+/* Utility layer - shared utility classes */
+@layer utilities {
+  /* Text utilities */
+  .text-muted {
+    color: hsl(var(--muted-foreground));
+  }
+
+  .text-muted-sm {
+    color: hsl(var(--muted-foreground));
+    font-size: 0.875rem;
+  }
+
+  .text-muted-xs {
+    color: hsl(var(--muted-foreground));
+    font-size: 0.75rem;
+  }
+
+  /* Border utilities */
+  .border-subtle {
+    border-color: hsl(var(--border));
+  }
+
+  /* Surface utilities */
+  .bg-surface {
+    background-color: hsl(var(--card));
+  }
+
+  .bg-surface-elevated {
+    background-color: hsl(var(--popover));
+  }
+}
+
+/* Component layer - base component styles */
+@layer components {
+  /* Button base styles */
+  .btn {
+    @apply inline-flex items-center justify-center whitespace-nowrap rounded-[var(--radius)] text-sm font-medium transition-colors;
+    @apply focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[hsl(var(--ring))];
+    @apply disabled:pointer-events-none disabled:opacity-50;
+    padding: var(--spacing-phi-xs) var(--spacing-phi-sm);
+  }
+
+  .btn-primary {
+    @apply btn;
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+  }
+
+  .btn-primary:hover {
+    opacity: 0.9;
+  }
+
+  .btn-outline {
+    @apply btn;
+    border: 1px solid hsl(var(--border));
+    background-color: hsl(var(--background));
+  }
+
+  .btn-outline:hover {
+    background-color: hsl(var(--accent));
+    color: hsl(var(--accent-foreground));
+  }
+
+  .btn-ghost {
+    @apply btn;
+  }
+
+  .btn-ghost:hover {
+    background-color: hsl(var(--accent));
+    color: hsl(var(--accent-foreground));
+  }
+
+  .btn-link {
+    @apply btn;
+    color: hsl(var(--primary));
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  .btn-link:hover {
+    opacity: 0.8;
+  }
+}

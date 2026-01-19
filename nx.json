@@ -1,6 +1,8 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
-  "cli": { "packageManager": "pnpm" },
+  "cli": {
+    "packageManager": "pnpm"
+  },
   "namedInputs": {
     "default": ["{projectRoot}/**/*", "sharedGlobals"],
     "sharedGlobals": [
@@ -10,16 +12,53 @@
     "production": ["default", "!{projectRoot}/**/*.spec.ts"]
   },
   "generators": {
-    "@nx/react": { "application": { "babel": true } },
-    "@nx/next": { "application": { "style": "css", "linter": "eslint" } }
+    "@nx/react": {
+      "application": {
+        "babel": true
+      }
+    },
+    "@nx/next": {
+      "application": {
+        "style": "css",
+        "linter": "eslint"
+      }
+    }
   },
   "defaultProject": "wrthwhl",
   "targetDefaults": {
-    "build": { "dependsOn": ["^build"], "cache": true },
-    "lint": { "cache": true },
-    "test": { "cache": true },
-    "e2e": { "cache": true }
+    "build": {
+      "dependsOn": ["^build"],
+      "cache": true
+    },
+    "lint": {
+      "cache": true
+    },
+    "test": {
+      "cache": true
+    },
+    "e2e": {
+      "cache": true
+    }
   },
   "defaultBase": "main",
-  "nxCloudId": "696d300f317b6cdd3a885da7"
+  "nxCloudId": "696d300f317b6cdd3a885da7",
+  "plugins": [
+    {
+      "plugin": "@nx/next/plugin",
+      "options": {
+        "startTargetName": "start",
+        "buildTargetName": "next:build",
+        "devTargetName": "next:dev",
+        "serveStaticTargetName": "serve-static",
+        "buildDepsTargetName": "build-deps",
+        "watchDepsTargetName": "watch-deps"
+      }
+    },
+    {
+      "plugin": "@nx/eslint/plugin",
+      "options": {
+        "targetName": "eslint:lint"
+      }
+    }
+  ]
 }

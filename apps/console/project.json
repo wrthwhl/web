@@ -1,0 +1,41 @@
+{
+  "name": "console",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/console",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/next:build",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/console"
+      },
+      "configurations": {
+        "development": {
+          "outputPath": "apps/console"
+        },
+        "production": {}
+      }
+    },
+    "dev": {
+      "executor": "@nx/next:server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "console:build",
+        "dev": true,
+        "port": 3001
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "console:build:development"
+        },
+        "production": {
+          "buildTarget": "console:build:production",
+          "dev": false
+        }
+      }
+    }
+  }
+}

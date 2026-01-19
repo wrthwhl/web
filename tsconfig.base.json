@@ -15,7 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@wrthwhl/content": [".contentlayer/generated"]
+      "@wrthwhl/content": ["libs/content/.contentlayer/generated"]
     }
   },
   "exclude": ["node_modules", "tmp"]

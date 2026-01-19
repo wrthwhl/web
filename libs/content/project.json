@@ -15,6 +15,7 @@
     },
     "build": {
       "executor": "nx:run-commands",
+      "outputs": ["{projectRoot}/.contentlayer"],
       "options": {
         "commands": ["contentlayer2 build"],
         "cwd": "libs/content"

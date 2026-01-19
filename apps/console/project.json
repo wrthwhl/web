@@ -36,6 +36,13 @@
           "dev": false
         }
       }
+    },
+    "deploy": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "pnpm exec wrangler pages deploy dist/apps/console/.next --project-name wrthwhl-console --branch main --commit-dirty=true"
+      },
+      "dependsOn": ["build"]
     }
   }
 }

@@ -12,12 +12,19 @@ const app = new Hono<{ Bindings: Bindings }>();
 app.use(
   '/api/*',
   cors({
-    origin: [
-      'https://marco.wrthwhl.cloud',
-      'https://console.wrthwhl.cloud',
-      'http://localhost:3000',
-      'http://localhost:3001',
-    ],
+    origin: (origin) => {
+      const allowed = [
+        'https://marco.wrthwhl.cloud',
+        'https://console.wrthwhl.cloud',
+        'http://localhost:3000',
+        'http://localhost:3001',
+      ];
+      // Allow exact matches
+      if (allowed.includes(origin)) return origin;
+      // Allow Cloudflare Pages preview URLs
+      if (origin.endsWith('.wrthwhl-console.pages.dev')) return origin;
+      return null;
+    },
     allowMethods: ['GET', 'POST', 'OPTIONS'],
     allowHeaders: ['Content-Type'],
     credentials: true,

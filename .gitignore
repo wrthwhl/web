@@ -53,3 +53,6 @@ Thumbs.db
 
 # Auto-generated Next.js file
 next-env.d.ts
+
+# Wrangler
+.wrangler/
